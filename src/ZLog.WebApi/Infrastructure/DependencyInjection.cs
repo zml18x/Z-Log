@@ -1,4 +1,5 @@
 ﻿using ZLog.WebApi.Infrastructure.Data;
+using ZLog.WebApi.Infrastructure.Identity;
 
 namespace ZLog.WebApi.Infrastructure;
 
@@ -6,5 +7,6 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         => services
-            .AddSqlLiteDb(configuration);
+            .AddSqlLiteDb(configuration)
+            .AddIdentity();
 }
