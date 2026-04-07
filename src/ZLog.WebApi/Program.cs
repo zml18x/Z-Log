@@ -2,6 +2,7 @@ using Serilog;
 using Scalar.AspNetCore;
 using ZLog.WebApi.Infrastructure;
 using ZLog.WebApi.Infrastructure.Data;
+using ZLog.WebApi.Shared.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 
 await app.MigrateDatabase();
