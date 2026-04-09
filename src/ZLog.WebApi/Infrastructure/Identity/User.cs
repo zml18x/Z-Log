@@ -4,5 +4,6 @@ namespace ZLog.WebApi.Infrastructure.Identity;
 
 public class User : IdentityUser<Guid>
 {
-    
+    public string DisplayName { get; init; } = null!;
+    public string? ImageUrl { get; set; }
 }

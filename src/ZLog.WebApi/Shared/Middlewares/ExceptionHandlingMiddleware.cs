@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using ZLog.WebApi.Shared.Responses;
+using ZLog.WebApi.Shared.Exceptions;
 
 namespace ZLog.WebApi.Shared.Middlewares;
 
@@ -20,13 +21,14 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
     
     private async Task HandleExceptionAsync(HttpContext context, Exception ex)
     {
-        var (statusCode, message) = ex switch
+        var (statusCode, message, errors) = ex switch
         {
-            ArgumentNullException or ArgumentException => (HttpStatusCode.BadRequest, ex.Message),
-            _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred.")
+            ValidationException ve  => (HttpStatusCode.BadRequest, ve.Message, ve.Errors),
+            ArgumentNullException or ArgumentException  => (HttpStatusCode.BadRequest, ex.Message, null),
+            _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred.", null)
         };
 
-        var response = ApiResponse.ErrorResult((int)statusCode, message);
+        var response = ApiResponse.ErrorResult(statusCode, message, errors);
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)statusCode;
