@@ -28,7 +28,7 @@ public class RegisterCommandHandler(UserManager<User> userManager, ILogger<Regis
             return ApiResponse<RegisterResponse>.ErrorResult(HttpStatusCode.BadRequest, "", errors);
         }
 
-        logger.LogInformation("New user registered: {Email} with ID {UserId}", user.Email, user.Id);
+        logger.LogInformation("New user registered with ID {UserId}", user.Id);
         
         var response = new RegisterResponse(user.Id, user.Email, user.DisplayName);
 

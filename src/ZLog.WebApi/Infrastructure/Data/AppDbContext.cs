@@ -8,8 +8,19 @@ namespace ZLog.WebApi.Infrastructure.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options)
     : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options)
 {
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => x.Token).IsUnique();
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.RefreshTokens)
+                .HasForeignKey(x => x.UserId);
+        });
+        
         base.OnModelCreating(modelBuilder);
 
         if (!Database.IsSqlite())

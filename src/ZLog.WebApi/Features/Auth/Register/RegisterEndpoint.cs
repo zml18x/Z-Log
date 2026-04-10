@@ -15,7 +15,7 @@ public class RegisterEndpoint : IEndpoint
                 var response = await sender.Send(command);
 
                 return response.ToApiResult();
-            }).WithTags("Auth").WithName("Register")
+            }).WithTags("Auth").WithName("Register") .AllowAnonymous()
             .Produces<ApiResponse<RegisterResponse>>(StatusCodes.Status201Created)
             .Produces<ApiResponse<RegisterResponse>>(StatusCodes.Status400BadRequest);
     }
