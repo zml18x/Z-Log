@@ -4,6 +4,7 @@ using FluentValidation;
 using Scalar.AspNetCore;
 using ZLog.WebApi.Infrastructure;
 using ZLog.WebApi.Infrastructure.Data;
+using ZLog.WebApi.Shared.OpenAPI;
 using ZLog.WebApi.Shared.Behaviours;
 using ZLog.WebApi.Shared.Extensions;
 using ZLog.WebApi.Shared.Middlewares;
@@ -11,7 +12,8 @@ using ZLog.WebApi.Shared.Middlewares;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddOpenApi()
+    .AddOptions()
+    .AddOpenApi(o => o.AddDocumentTransformer<BearerSecuritySchemeTransformer>())
     .AddEndpoints()
     .AddInfrastructure(builder.Configuration)
     .AddValidatorsFromAssembly(typeof(Program).Assembly)
@@ -37,9 +39,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
-
-app.MapEndpoints();
+app.UseAuthentication();
+app.UseAuthorization();
 
 await app.MigrateDatabase();
+
+app.MapEndpoints();
 
 app.Run();
