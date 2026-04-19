@@ -2,6 +2,7 @@
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ZLog.WebApi.Shared.Services;
 using ZLog.WebApi.Infrastructure.Auth;
 using ZLog.WebApi.Infrastructure.Data;
 using ZLog.WebApi.Infrastructure.Email;
@@ -48,6 +49,7 @@ public static class DependencyInjection
 
         services.AddScoped<TokenService>();
         services.AddScoped<RefreshTokenService>();
+        services.AddScoped<UserService>();
 
         return services;
     }

@@ -24,6 +24,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
         var (statusCode, message, errors) = ex switch
         {
             ValidationException ve  => (HttpStatusCode.BadRequest, ve.Message, ve.Errors),
+            UnauthorizedException => (HttpStatusCode.Unauthorized, ex.Message, null),
             ArgumentNullException or ArgumentException  => (HttpStatusCode.BadRequest, ex.Message, null),
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred.", null)
         };

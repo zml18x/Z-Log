@@ -4,23 +4,18 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using ZLog.WebApi.Shared.Responses;
 using ZLog.WebApi.Infrastructure.Identity;
+using ZLog.WebApi.Shared.Services;
 
 namespace ZLog.WebApi.Features.Auth.ChangePassword;
 
 public class ChangePasswordHandler(
+    UserService userService,
     UserManager<User> userManager,
-    IHttpContextAccessor httpContextAccessor,
     ILogger<ChangePasswordHandler> logger) : IRequestHandler<ChangePasswordCommand, ApiResponse>
 {
     public async Task<ApiResponse> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
-        var userId = httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userId))
-            return ApiResponse.ErrorResult(HttpStatusCode.Unauthorized, "Unauthorized.");
-
-        var user = await userManager.FindByIdAsync(userId);
-        if (user == null)
-            return ApiResponse.ErrorResult(HttpStatusCode.Unauthorized, "Unauthorized.");
+        var user = await userService.GetRequiredUserAsync(cancellationToken);
 
         var result = await userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
 
